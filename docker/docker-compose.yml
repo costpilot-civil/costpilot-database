@@ -1,3 +1,5 @@
+name: costpilot-database
+
 services:
   postgres:
     image: pgvector/pgvector:pg17
