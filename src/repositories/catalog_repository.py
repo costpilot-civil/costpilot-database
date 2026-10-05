@@ -8,7 +8,7 @@ class CatalogRepository:
     def __init__(self, conn: Connection) -> None:
         self._conn = conn
 
-    def insert_product_group(
+    def upsert_product_group(
         self,
         *,
         data_source_id: int,
@@ -24,6 +24,9 @@ class CatalogRepository:
                     name
                 )
                 VALUES (%s, %s, %s)
+                ON CONFLICT (data_source_id, code)
+                DO UPDATE SET
+                    name = EXCLUDED.name
                 RETURNING id;
                 """,
                 (
@@ -36,11 +39,11 @@ class CatalogRepository:
             row = cursor.fetchone()
 
         if row is None:
-            raise RuntimeError("Failed to insert product group.")
+            raise RuntimeError("Failed to upsert product group.")
 
         return int(row[0])
 
-    def insert_commodity_group(
+    def upsert_commodity_group(
         self,
         *,
         data_source_id: int,
@@ -90,6 +93,24 @@ class CatalogRepository:
                     %s, %s, %s, %s, %s, %s,
                     %s, %s, %s, %s, %s, %s
                 )
+                ON CONFLICT (data_source_id, code)
+                DO UPDATE SET
+                    description = EXCLUDED.description,
+                    parent_id = EXCLUDED.parent_id,
+                    source_ref = EXCLUDED.source_ref,
+                    cost_code = EXCLUDED.cost_code,
+                    unit = EXCLUDED.unit,
+                    discount = EXCLUDED.discount,
+                    wastage = EXCLUDED.wastage,
+                    estimation_factor = EXCLUDED.estimation_factor,
+                    regie_factor = EXCLUDED.regie_factor,
+                    addition_1 = EXCLUDED.addition_1,
+                    addition_2 = EXCLUDED.addition_2,
+                    addition_3 = EXCLUDED.addition_3,
+                    addition_4 = EXCLUDED.addition_4,
+                    remarks = EXCLUDED.remarks,
+                    product_group_id = EXCLUDED.product_group_id,
+                    fixed_hours = EXCLUDED.fixed_hours
                 RETURNING id;
                 """,
                 (
@@ -117,11 +138,11 @@ class CatalogRepository:
             row = cursor.fetchone()
 
         if row is None:
-            raise RuntimeError("Failed to insert commodity group.")
+            raise RuntimeError("Failed to upsert commodity group.")
 
         return int(row[0])
 
-    def insert_commodity(
+    def upsert_commodity(
         self,
         *,
         data_source_id: int,
@@ -180,6 +201,28 @@ class CatalogRepository:
                     %s, %s, %s, %s, %s, %s,
                     %s, %s, %s, %s
                 )
+                ON CONFLICT (data_source_id, code)
+                DO UPDATE SET
+                    description = EXCLUDED.description,
+                    commodity_group_id = EXCLUDED.commodity_group_id,
+                    source_ref = EXCLUDED.source_ref,
+                    unit = EXCLUDED.unit,
+                    cost_code = EXCLUDED.cost_code,
+                    cost_code_unit = EXCLUDED.cost_code_unit,
+                    weight = EXCLUDED.weight,
+                    weight_unit = EXCLUDED.weight_unit,
+                    volume = EXCLUDED.volume,
+                    volume_unit = EXCLUDED.volume_unit,
+                    addition_1 = EXCLUDED.addition_1,
+                    addition_2 = EXCLUDED.addition_2,
+                    addition_3 = EXCLUDED.addition_3,
+                    addition_4 = EXCLUDED.addition_4,
+                    remarks = EXCLUDED.remarks,
+                    external_price_update = EXCLUDED.external_price_update,
+                    selected = EXCLUDED.selected,
+                    fixed_hours = EXCLUDED.fixed_hours,
+                    change_date = EXCLUDED.change_date,
+                    change_user = EXCLUDED.change_user
                 RETURNING id;
                 """,
                 (
@@ -211,9 +254,23 @@ class CatalogRepository:
             row = cursor.fetchone()
 
         if row is None:
-            raise RuntimeError("Failed to insert commodity.")
+            raise RuntimeError("Failed to upsert commodity.")
 
         return int(row[0])
+
+    def delete_commodity_prices(
+        self,
+        *,
+        commodity_id: int,
+    ) -> None:
+        with self._conn.cursor() as cursor:
+            cursor.execute(
+                """
+                DELETE FROM commodity_prices
+                WHERE commodity_id = %s;
+                """,
+                (commodity_id,),
+            )
 
     def insert_commodity_price(
         self,
@@ -267,6 +324,20 @@ class CatalogRepository:
             raise RuntimeError("Failed to insert commodity price.")
 
         return int(row[0])
+
+    def delete_estimate_prices(
+        self,
+        *,
+        commodity_id: int,
+    ) -> None:
+        with self._conn.cursor() as cursor:
+            cursor.execute(
+                """
+                DELETE FROM estimate_prices
+                WHERE commodity_id = %s;
+                """,
+                (commodity_id,),
+            )
 
     def insert_estimate_price(
         self,
