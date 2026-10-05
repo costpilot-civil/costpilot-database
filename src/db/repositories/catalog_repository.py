@@ -4,13 +4,14 @@ from decimal import Decimal
 from psycopg import Connection
 
 
-class DBRepository:
+class CatalogRepository:
     def __init__(self, conn: Connection) -> None:
         self._conn = conn
 
     def insert_product_group(
         self,
         *,
+        data_source_id: int,
         code: str,
         name: str,
     ) -> int:
@@ -18,13 +19,15 @@ class DBRepository:
             cursor.execute(
                 """
                 INSERT INTO product_groups (
+                    data_source_id,
                     code,
                     name
                 )
-                VALUES (%s, %s)
+                VALUES (%s, %s, %s)
                 RETURNING id;
                 """,
                 (
+                    data_source_id,
                     code,
                     name,
                 ),
@@ -40,6 +43,7 @@ class DBRepository:
     def insert_commodity_group(
         self,
         *,
+        data_source_id: int,
         code: str,
         description: str | None,
         parent_id: int | None,
@@ -62,6 +66,7 @@ class DBRepository:
             cursor.execute(
                 """
                 INSERT INTO commodity_groups (
+                    data_source_id,
                     code,
                     description,
                     parent_id,
@@ -82,13 +87,13 @@ class DBRepository:
                 )
                 VALUES (
                     %s, %s, %s, %s, %s, %s,
-                    %s, %s, %s, %s,
-                    %s, %s, %s, %s,
-                    %s, %s, %s
+                    %s, %s, %s, %s, %s, %s,
+                    %s, %s, %s, %s, %s, %s
                 )
                 RETURNING id;
                 """,
                 (
+                    data_source_id,
                     code,
                     description,
                     parent_id,
@@ -119,10 +124,10 @@ class DBRepository:
     def insert_commodity(
         self,
         *,
+        data_source_id: int,
         code: str,
         description: str | None,
         commodity_group_id: int,
-        product_group_id: int | None,
         source_ref: str | None,
         unit: str | None,
         cost_code: str | None,
@@ -146,10 +151,10 @@ class DBRepository:
             cursor.execute(
                 """
                 INSERT INTO commodities (
+                    data_source_id,
                     code,
                     description,
                     commodity_group_id,
-                    product_group_id,
                     source_ref,
                     unit,
                     cost_code,
@@ -178,10 +183,10 @@ class DBRepository:
                 RETURNING id;
                 """,
                 (
+                    data_source_id,
                     code,
                     description,
                     commodity_group_id,
-                    product_group_id,
                     source_ref,
                     unit,
                     cost_code,
