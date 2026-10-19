@@ -1,0 +1,4 @@
+[pytest]
+testpaths = tests
+markers =
+    integration: PostgreSQL integration tests requiring COSTPILOT_TEST_DATABASE=1

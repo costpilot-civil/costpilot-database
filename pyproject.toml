@@ -14,3 +14,8 @@ dependencies = [
 
 [tool.uv.sources]
 costpilot-core = { path = "../costpilot-core", editable = true }
+
+[dependency-groups]
+dev = [
+    "pytest>=9.1.1",
+]
