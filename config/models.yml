@@ -1,0 +1,11 @@
+embedding:
+  bge-m3:
+    name: BAAI/bge-m3
+    version: v1
+    path: /home/guanlin/projects/costpilot/models/embedding/bge-m3
+
+reranking:
+  bge-reranker:
+    name: BAAI/bge-reranker-v2-m3
+    version: v1
+    path: /home/guanlin/projects/costpilot/models/reranking/bge-reranker-v2-m3
