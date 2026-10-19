@@ -4,7 +4,7 @@ from decimal import Decimal, InvalidOperation
 from pathlib import Path
 from xml.etree.ElementTree import Element
 
-from src.importing.models import (
+from src.models.parsed_commodity import (
     ParsedArticleData,
     ParsedCommodity,
     ParsedCommodityGroup,

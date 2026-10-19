@@ -5,7 +5,7 @@ from dataclasses import dataclass
 
 from psycopg import Connection
 
-from src.importing.models import (
+from src.models.parsed_commodity import (
     ParsedArticleData,
     ParsedCommodityGroup,
     ParsedCommodityPrice,
