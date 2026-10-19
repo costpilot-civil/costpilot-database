@@ -65,12 +65,14 @@ name = "costpilot-core"
 version = "0.1.0"
 source = { editable = "../costpilot-core" }
 dependencies = [
+    { name = "dotenv" },
     { name = "pyyaml" },
     { name = "sentence-transformers" },
 ]
 
 [package.metadata]
 requires-dist = [
+    { name = "dotenv", specifier = ">=0.9.9" },
     { name = "pyyaml", specifier = ">=6.0.3" },
     { name = "sentence-transformers", specifier = ">=6.1.0" },
 ]

@@ -3,6 +3,8 @@ from decimal import Decimal
 
 from psycopg import Connection
 
+from models.commodity_record import CommodityRecord
+
 
 class CatalogRepository:
     def __init__(self, conn: Connection) -> None:
@@ -388,3 +390,43 @@ class CatalogRepository:
             raise RuntimeError("Failed to insert estimate price.")
 
         return int(row[0])
+
+    def read_commodities(
+        self,
+        *,
+        data_source_id: int,
+    ) -> list[CommodityRecord]:
+        with self._conn.cursor() as cursor:
+            cursor.execute(
+                """
+                SELECT
+                    c.id,
+                    c.code,
+                    c.description,
+                    c.unit,
+                    c.cost_code,
+                    cg.code,
+                    cg.description
+                FROM commodities AS c
+                JOIN commodity_groups AS cg
+                    ON cg.id = c.commodity_group_id
+                WHERE c.data_source_id = %s
+                ORDER BY c.id;
+                """,
+                (data_source_id,),
+            )
+
+            rows = cursor.fetchall()
+
+        return [
+            CommodityRecord(
+                id=int(row[0]),
+                code=row[1],
+                description=row[2],
+                unit=row[3],
+                cost_code=row[4],
+                group_code=row[5],
+                group_description=row[6],
+            )
+            for row in rows
+        ]
