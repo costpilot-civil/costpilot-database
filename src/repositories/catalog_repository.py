@@ -3,7 +3,7 @@ from decimal import Decimal
 
 from psycopg import Connection
 
-from models.commodity_record import CommodityRecord
+from src.models.commodity_record import CommodityRecord
 
 
 class CatalogRepository:
