@@ -18,7 +18,7 @@ services:
 
     volumes:
       - ../data/postgres:/data/postgres
-      - ../sql/schema_v2.sql:/docker-entrypoint-initdb.d/02-schema.sql:ro
+      - ../sql/schema_v3.sql:/docker-entrypoint-initdb.d/03-schema.sql:ro
 
     healthcheck:
       test:
