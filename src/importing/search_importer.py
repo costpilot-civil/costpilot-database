@@ -24,7 +24,11 @@ class SearchImporter:
     ) -> None:
         search_text = self._build_text(commodity)
 
-        result = self._extractor.extract(search_text)
+        # Only product-specific factual descriptions are suitable for attributes.
+        # Group descriptions and business codes are useful for search, but may
+        # describe a category rather than the individual commodity.
+        extraction_text = self._build_extraction_text(commodity)
+        result = self._extractor.extract(extraction_text)
 
         material_type = None
         attributes = {}
@@ -84,3 +88,12 @@ class SearchImporter:
         return " ".join(
             part.strip() for part in parts if part is not None and part.strip()
         )
+
+    @staticmethod
+    def _build_extraction_text(commodity: CommodityRecord) -> str:
+        parts = [commodity.description]
+        if commodity.remarks and not commodity.remarks.startswith(
+            "Synthetic test data for CostPilot development"
+        ):
+            parts.append(commodity.remarks)
+        return " ".join(part.strip() for part in parts if part and part.strip())

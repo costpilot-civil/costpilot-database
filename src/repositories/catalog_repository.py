@@ -406,7 +406,8 @@ class CatalogRepository:
                     c.unit,
                     c.cost_code,
                     cg.code,
-                    cg.description
+                    cg.description,
+                    c.remarks
                 FROM commodities AS c
                 JOIN commodity_groups AS cg
                     ON cg.id = c.commodity_group_id
@@ -427,6 +428,7 @@ class CatalogRepository:
                 cost_code=row[4],
                 group_code=row[5],
                 group_description=row[6],
+                remarks=row[7],
             )
             for row in rows
         ]
